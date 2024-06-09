@@ -5,5 +5,8 @@ namespace Codepulse_API.Repositories.Interface
     public interface IBlogPostRepository
     {
         Task<BlogPost> CreateAsync (BlogPost blogPost);
+        Task<IEnumerable<BlogPost>> GetAllasync();
+        Task<BlogPost?> GetByIdAsync(Guid id);
+
     }
 }

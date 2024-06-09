@@ -11,5 +11,6 @@
         public DateTime PublishedDate { get; set; }
         public String Author { get; set; }
         public bool IsVisible { get; set; }
+        public ICollection<Clategory> Categories { get; set; }
     }
 }
