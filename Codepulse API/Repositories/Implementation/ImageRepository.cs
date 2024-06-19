@@ -28,14 +28,14 @@ namespace Codepulse_API.Repositories.Implementation
         public async Task<BlogImage> Upload(IFormFile file, BlogImage blogImage)
         {
             // 1-Upload the Image to Api/Images
-            /* var localPath=Path.Combine(webHostEnvironment.ContentRootPath,"Images",$"{blogImage.FileName}{blogImage.FileExtension}");  */
+             var localPath=Path.Combine(webHostEnvironment.ContentRootPath,"Images",$"{blogImage.FileName}{blogImage.FileExtension}");  
 
-            var imagesPath = Path.Combine(webHostEnvironment.ContentRootPath, "Images");
+          /*  var imagesPath = Path.Combine(webHostEnvironment.ContentRootPath, "Images");
             if (!Directory.Exists(imagesPath))
             {
                 Directory.CreateDirectory(imagesPath);
             }
-            var localPath = Path.Combine(imagesPath, $"{blogImage.FileName}{blogImage.FileExtension}");
+            var localPath = Path.Combine(imagesPath, $"{blogImage.FileName}{blogImage.FileExtension}");    */
 
 
             using var stream = new FileStream(localPath, FileMode.Create);

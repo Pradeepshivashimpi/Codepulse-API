@@ -1,6 +1,7 @@
 ﻿using Codepulse_API.Models.Domain;
 using Codepulse_API.Models.DTO;
 using Codepulse_API.Repositories.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +22,7 @@ namespace Codepulse_API.Controllers
         }
         // post
         [HttpPost]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> CreateBlogPost([FromBody]CreateBlogPostRequestDto request)
         {
             // convertdto to domain
@@ -104,7 +106,7 @@ namespace Codepulse_API.Controllers
         }
 
 
-        // get
+        // get by id
         [HttpGet]
         [Route("{id:Guid}")]
         public async Task<IActionResult> GetBlogPostById([FromRoute] Guid id)
@@ -138,9 +140,48 @@ namespace Codepulse_API.Controllers
         }
 
 
+
+        // Get {apibaseurl}/api/blogPost/{urlHandle}
+        [HttpGet]
+        [Route("{urlHandle}")]
+        public async Task<IActionResult> GetBlogPostByUrlHandle([FromRoute] string urlHandle)
+        {
+            // get blogpost details from repository
+            var blogPost = await blogPostRepository.GetByUrlHandleAsync(urlHandle);
+
+            if (blogPost is null)
+            {
+                return NotFound();
+            }
+
+            // convert to domain model
+            var response = new BlogPostDto
+            {
+                Id = blogPost.Id,
+                Author = blogPost.Author,
+                Content = blogPost.Content,
+                FeaturedImageUrl = blogPost.FeaturedImageUrl,
+                IsVisible = blogPost.IsVisible,
+                PublishedDate = blogPost.PublishedDate,
+                ShortDescription = blogPost.ShortDescription,
+                Title = blogPost.Title,
+                UrlHandle = blogPost.UrlHandle,
+                Categories = blogPost.Categories.Select(x => new CategoryDto
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    UrlHandle = x.UrlHandle
+                }).ToList(),
+            };
+            return Ok(response);
+        }
+
+
+
         // edit
         [HttpPut]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> UpdateBlogPostById([FromRoute] Guid id, UpdateBlogPostRequestDto request)
         {
             // convert dto to domain model
@@ -202,6 +243,7 @@ namespace Codepulse_API.Controllers
         // delete
         [HttpDelete]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> DeleteBlogPost([FromRoute] Guid id)
         {
            var deletedBlogPost= await blogPostRepository.DeleteAsync(id);
