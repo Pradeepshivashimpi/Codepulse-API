@@ -20,7 +20,7 @@ namespace Codepulse_API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Writer")]
+      //  [Authorize(Roles = "Writer")]
         public async Task<IActionResult> CreateCategory([FromBody] ClreateCategoryRequestDto request)
         {
             // Map DTO to Domain Model
@@ -44,11 +44,17 @@ namespace Codepulse_API.Controllers
         }
 
 
-        // get:https://localhost:7188/api/Categories
+        // get:https://localhost:7188/api/Categories?query=html&sortBy=name&sortDirection=desc
         [HttpGet]
-        public async Task<IActionResult> GetAllCategories()
+        public async Task<IActionResult> GetAllCategories(
+            [FromQuery] string? query,
+            [FromQuery] string? sortBy,
+            [FromQuery] string? sortDirection,
+            [FromQuery] int? pageNumber,
+            [FromQuery] int? pageSize)
         {
-            var categories = await categoryRepository.GetAllAsync();
+            var categories = await categoryRepository.
+                GetAllAsync(query,sortBy,sortDirection,pageNumber,pageSize);
 
             // map domain model to dto
             var response = new List<CategoryDto>();
@@ -133,6 +139,18 @@ namespace Codepulse_API.Controllers
                 UrlHandle = category.UrlHandle,
             };
             return Ok(response);
+        }
+
+
+        // get count
+        [HttpGet]
+        [Route("count")]
+        // [Authorize(Roles = "Writer")]
+        public async Task<IActionResult> GetCategoriesTotal()
+        {
+            var count = await categoryRepository.GetCount();
+
+            return Ok(count);
         }
     }
 }
